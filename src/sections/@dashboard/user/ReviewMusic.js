@@ -260,8 +260,8 @@ export default function PreList({ bearId }) {
             alignItems: 'center',
           }}
         >
-          <Typography variant="h2">review your songs</Typography>
-          <Typography variant="h2">and pick product</Typography>
+          <Typography variant="h2">Review Songs and Pick</Typography>
+          <Typography variant="h2">Which One You Want</Typography>
           <Typography variant="h2">in your child&apos;s Bear</Typography>
           <Image
             disabledEffect

@@ -102,17 +102,18 @@ export default function UserNewEditForm({ userData }) {
         <Grid item xs={12} md={12}>
           <Card sx={{ p: 3 }}>
             <Typography variant="h4" gutterBottom>
-              Answer the questions
+              Tell us about your little one so we can create the best memorable song.
             </Typography>
             <Stack spacing={2} alignItems="center" sx={{ mt: 3 }}>
-              <RHFTextField name="name" label="Name of child" />
-              <RHFTextField name="appearance" label="Appearance of child" />
-              <RHFTextField name="personality" label="Personality of child" />
-              <RHFTextField name="feature" label="Things only you know about your child" />
-              <RHFTextField name="special" label="Any other special things to mention" />
+              <RHFTextField name="name" label="Name of Your Child" />
+              <RHFTextField
+                name="appearance"
+                label="Describe the appearance of your child (tell us any unique features)"
+              />
+              <RHFTextField name="personality" label="Personality (are they energetic, shy, etc)" />
               <RHFTextField
                 name="perspective"
-                label="Perspective (whose perspective the song is written from)"
+                label="Perspective (mommy and daddy or who is singing this song)"
               />
               <RHFTextField name="singer" label="Male or Female Singer" />
 
