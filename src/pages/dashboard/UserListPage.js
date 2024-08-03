@@ -14,13 +14,9 @@ import {
   TableContainer,
   LinearProgress,
 } from '@mui/material';
-// routes
-import { PATH_DASHBOARD } from '../../routes/paths';
 // components
-// import Iconify from '../../components/iconify';
 import Scrollbar from '../../components/scrollbar';
 // import ConfirmDialog from '../../components/confirm-dialog';
-import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
 import { useSettingsContext } from '../../components/settings';
 import {
   useTable,
@@ -39,19 +35,6 @@ import axios from '../../utils/axios';
 // ----------------------------------------------------------------------
 
 const STATUS_OPTIONS = ['all', 'unpaid', 'paid'];
-
-// const ROLE_OPTIONS = [
-//   'all',
-//   'ux designer',
-//   'full stack designer',
-//   'backend developer',
-//   'project manager',
-//   'leader',
-//   'ui designer',
-//   'ui/ux designer',
-//   'front end developer',
-//   'full stack developer',
-// ];
 
 const TABLE_HEAD = [
   { id: 'id', label: 'id', align: 'left' },
@@ -74,7 +57,6 @@ export default function UserListPage() {
     setPage,
     //
     selected,
-    setSelected,
     onSelectRow,
     onSelectAllRows,
     //
