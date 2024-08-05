@@ -17,7 +17,7 @@ import UserBear from '../../sections/@dashboard/user/UserBear';
 export default function UserAccountPage() {
   const { themeStretch } = useSettingsContext();
 
-  const [currentTab, setCurrentTab] = useState('status_of_order');
+  const [currentTab, setCurrentTab] = useState('your_bear');
 
   const TABS = [
     {
@@ -27,8 +27,8 @@ export default function UserAccountPage() {
       component: <AccountGeneral />,
     },
     {
-      value: 'status_of_order',
-      label: 'Status of Order',
+      value: 'your_bear',
+      label: 'Your Bear',
       icon: <Iconify icon="eva:share-fill" />,
       component: <UserBear />,
     },

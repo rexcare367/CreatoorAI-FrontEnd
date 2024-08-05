@@ -1,8 +1,10 @@
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import {
   Table,
   Card,
+  Link,
   Stack,
   TableBody,
   TableContainer,
@@ -73,30 +75,27 @@ export default function PreList({ bearId }) {
   const [bearData, setBearData] = useState({ status: 'pending', suggestionClipIds: [] });
 
   const loadBear = async () => {
-    const intervalId = setInterval(async () => {
-      const _bear = await axios
-        .get(`bear/${bearId}`)
-        .then((resp) => resp.data)
-        .catch((err) => err);
-      const { suggestionClipIds } = _bear;
-      console.log('data :>> ', _bear);
-      await setBearData(_bear);
-      if (suggestionClipIds.length > 0) {
-        clearInterval(intervalId);
-        let i = 0;
-        let musics = [];
-        while (i < suggestionClipIds.length) {
-          // eslint-disable-next-line no-await-in-loop
-          const clipData = await loadMusic(suggestionClipIds[i]);
-          musics = [...musics, clipData];
-          i += 1;
-        }
-        console.log('musics :>> ', musics);
-        await setTableData(musics);
-        await setIsLoading(false);
-        await setApiStatus('success');
+    const _bear = await axios
+      .get(`bear/${bearId}`)
+      .then((resp) => resp.data)
+      .catch((err) => err);
+    const { suggestionClipIds } = _bear;
+    console.log('data :>> ', _bear);
+    await setBearData(_bear);
+    if (suggestionClipIds.length > 0) {
+      let i = 0;
+      let musics = [];
+      while (i < suggestionClipIds.length) {
+        // eslint-disable-next-line no-await-in-loop
+        const clipData = await loadMusic(suggestionClipIds[i]);
+        musics = [...musics, clipData];
+        i += 1;
       }
-    }, 10000);
+      console.log('musics :>> ', musics);
+      await setTableData(musics);
+      await setIsLoading(false);
+      await setApiStatus('success');
+    }
   };
 
   const loadMusic = async (clipId) => {
@@ -264,11 +263,15 @@ export default function PreList({ bearId }) {
           <Typography variant="h2">Which One You Want</Typography>
           <Typography variant="h2">in your child&apos;s Bear</Typography>
           <Image
-            disabledEffect
-            alt="grid"
+            alt="bear"
             src="/assets/images/home/bear.png"
-            sx={{ width: '450px', height: '450px', mt: 4, mx: 2, borderRadius: 2 }}
+            sx={{ width: '380px', height: '380px', my: 4, mx: 2, borderRadius: 2 }}
           />
+          <Stack>
+            <Link to="/dashboard/user/account" component={RouterLink} color="inherit">
+              Visit my profile
+            </Link>
+          </Stack>
         </Card>
       )}
     </>

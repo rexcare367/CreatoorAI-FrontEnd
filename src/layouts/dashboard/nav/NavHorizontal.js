@@ -3,6 +3,8 @@ import { memo } from 'react';
 // @mui
 import { useTheme } from '@mui/material/styles';
 import { AppBar, Box, Toolbar } from '@mui/material';
+// auth
+import { useAuthContext } from '../../../auth/useAuthContext';
 // config
 import { HEADER } from '../../../config-global';
 // utils
@@ -15,6 +17,7 @@ import navConfig from './config-navigation';
 // ----------------------------------------------------------------------
 
 function NavHorizontal() {
+  const { user } = useAuthContext();
   const theme = useTheme();
 
   return (
@@ -33,7 +36,7 @@ function NavHorizontal() {
           }),
         }}
       >
-        <NavSectionHorizontal data={navConfig} />
+        <NavSectionHorizontal data={navConfig[user.role]} />
       </Toolbar>
 
       <Shadow />

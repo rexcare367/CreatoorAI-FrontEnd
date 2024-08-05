@@ -95,10 +95,11 @@ export default function PreList({ bearId }) {
       .get(`bear/${bearId}`)
       .then((resp) => resp.data)
       .catch((err) => err);
-    const { finalClipIds } = _bear;
+    const { finalClipIds, suggestionClipIds } = _bear;
     // console.log('data :>> ', _bear);
     await setBearData(_bear);
-    if (finalClipIds.length > 0) await loadFinalMusics(_bear);
+    if (finalClipIds.length > 0) await loadMusicClips(finalClipIds);
+    else if (suggestionClipIds.length > 0) await loadMusicClips(suggestionClipIds);
     else await loadMusicsWithTaskId(_bear);
   };
 
@@ -123,17 +124,17 @@ export default function PreList({ bearId }) {
     }
     // console.log('musics :>> ', musics);
     await setTableData(musics);
+    await setApiStatus('success');
     setIsLoading(false);
   };
 
-  const loadFinalMusics = async (_bear) => {
-    const { finalClipIds } = _bear;
+  const loadMusicClips = async (clipsIds) => {
     let i = 0;
     let musics = [];
-    while (i < finalClipIds.length) {
+    while (i < clipsIds.length) {
       // eslint-disable-next-line no-await-in-loop
       const _newMusics = await axios
-        .get(`music/${finalClipIds[i]}`)
+        .get(`music/${clipsIds[i]}`)
         .then((resp) => {
           setApiStatus('loading');
           return resp.data;
@@ -147,6 +148,7 @@ export default function PreList({ bearId }) {
     }
     console.log('musics :>> ', musics);
     await setTableData(musics);
+    await setApiStatus('success');
     setIsLoading(false);
   };
 
@@ -221,15 +223,20 @@ export default function PreList({ bearId }) {
       })
       .then((resp) => {
         console.log('resp :>> ', resp);
+        loadBear(bearId);
       });
   };
 
   const handleBearStatus = async (status) => {
-    setValue('status', status);
-    await axios.patch(`/bear/manage/${bearId}`, {
-      status,
-    });
-    enqueueSnackbar('Successfully ordered your request!');
+    if (bearData.payment_status === 'unpaid') {
+      enqueueSnackbar('You can update status after finish payment');
+    } else {
+      setValue('status', status);
+      await axios.patch(`/bear/manage/${bearId}`, {
+        status,
+      });
+      enqueueSnackbar('Successfully ordered your request!');
+    }
   };
 
   return (
@@ -266,23 +273,25 @@ export default function PreList({ bearId }) {
             <Typography sx={{ mb: 2 }}>{bearData.id}</Typography>
             <Typography variant="h6">Prompt:</Typography>
             <Typography sx={{ mb: 2 }}>{bearData?.prompt}</Typography>
-            <Typography variant="h6">Payment Status:</Typography>
-            <Typography sx={{ mb: 2 }}>
+            <Typography variant="h6">
+              Payment Status:&nbsp;&nbsp;&nbsp;
               <Label variant="soft" color="success" sx={{ textTransform: 'capitalize' }}>
                 {bearData?.payment_status}
               </Label>
             </Typography>
-            <Typography variant="h6">Status:</Typography>
-            <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-              <RHFSelect name="status" onChange={(e) => handleBearStatus(e.target.value)}>
-                <Divider sx={{ borderStyle: 'dashed' }} />
-                {OPTIONS.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </RHFSelect>
-            </FormProvider>
+            <Stack flex flexDirection="row" alignItems="center" gap={2} sx={{ mt: 2 }}>
+              <Typography variant="h6">Status:</Typography>
+              <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+                <RHFSelect name="status" onChange={(e) => handleBearStatus(e.target.value)}>
+                  <Divider sx={{ borderStyle: 'dashed' }} />
+                  {OPTIONS.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </RHFSelect>
+              </FormProvider>
+            </Stack>
           </Stack>
         </Stack>
         <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
@@ -339,18 +348,20 @@ export default function PreList({ bearId }) {
             </Table>
           </Scrollbar>
         </TableContainer>
-        <Stack spacing={3} alignItems="flex-end" sx={{ m: 3 }}>
-          {isLoading && <LinearProgress color="primary" sx={{ mb: 2, width: 1 }} />}
-          <LoadingButton
-            type="button"
-            variant="contained"
-            loading={isLoadingCheckout}
-            disabled={selected.length < 1}
-            onClick={() => handleCheckout()}
-          >
-            Pick Musics for user
-          </LoadingButton>
-        </Stack>
+        {bearData.suggestionClipIds.length < 2 && (
+          <Stack spacing={3} alignItems="flex-end" sx={{ m: 3 }}>
+            {isLoading && <LinearProgress color="primary" sx={{ mb: 2, width: 1 }} />}
+            <LoadingButton
+              type="button"
+              variant="contained"
+              loading={isLoadingCheckout}
+              disabled={selected.length < 1}
+              onClick={() => handleCheckout()}
+            >
+              Pick Musics for user
+            </LoadingButton>
+          </Stack>
+        )}
       </Card>
     </>
   );

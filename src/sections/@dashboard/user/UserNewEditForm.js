@@ -17,23 +17,23 @@ import FormProvider, { RHFTextField } from '../../../components/hook-form';
 import axios from '../../../utils/axios';
 // ----------------------------------------------------------------------
 
-UserNewEditForm.propTypes = {
+NewMusic.propTypes = {
   userData: PropTypes.object,
 };
 
-export default function UserNewEditForm({ userData }) {
+export default function NewMusic({ userData }) {
   const navigate = useNavigate();
 
   const { enqueueSnackbar } = useSnackbar();
 
   const NewUserSchema = Yup.object().shape({
-    name: Yup.string().required('Baby Name is required'),
-    appearance: Yup.string().required('appearance is required'),
-    personality: Yup.string().required('personality is required'),
-    feature: Yup.string().required('feature is required'),
-    special: Yup.string().required('special is required'),
-    perspective: Yup.string().required('perspective is required'),
-    singer: Yup.string().required('singer is required'),
+    name: Yup.string().max(11).required('Baby Name is required'),
+    appearance: Yup.string().max(25).required('appearance is required'),
+    personality: Yup.string().max(25).required('personality is required'),
+    // feature: Yup.string().required('feature is required'),
+    // special: Yup.string().required('special is required'),
+    perspective: Yup.string().max(15).required('perspective is required'),
+    // singer: Yup.string().required('singer is required'),
   });
 
   const defaultValues = useMemo(
@@ -41,8 +41,8 @@ export default function UserNewEditForm({ userData }) {
       name: userData?.name || '',
       appearance: userData?.appearance || '',
       personality: userData?.personality || '',
-      feature: userData?.feature || '',
-      special: userData?.special || '',
+      // feature: userData?.feature || '',
+      // special: userData?.special || '',
       perspective: userData?.perspective || '',
       singer: userData?.singer || '',
     }),
@@ -72,14 +72,13 @@ export default function UserNewEditForm({ userData }) {
       await axios
         .post('music/generate', {
           prompt:
-            'unique song for children with the following information:: \n' +
-            `Name of child: ${data.name}\n` +
-            `Appearance of child: ${data.appearance}\n` +
-            // `Personality of child: ${data.personality}\n` +
+            `Write unique 3 minute song for my child -'${data.name} based on that info:` +
+            `Appearance: ${data.appearance}\n` +
+            `Personality: ${data.personality}\n` +
             // `Things only you know about your child: ${data.feature}\n` +
             // `Any other special things to mention:  ${data.special}\n` +
-            // `Perspective (whose perspective the song is written from): ${data.perspective}\n` +
-            `Male or Female Singer: ${data.singer}\n`,
+            `Perspective: ${data.perspective}\n`,
+          // `Singer: ${data.singer}`,
         })
         .then((res) => {
           const { result } = res.data;
@@ -105,17 +104,24 @@ export default function UserNewEditForm({ userData }) {
               Tell us about your little one so we can create the best memorable song.
             </Typography>
             <Stack spacing={2} alignItems="center" sx={{ mt: 3 }}>
-              <RHFTextField name="name" label="Name of Your Child" />
+              <RHFTextField name="name" label="Name of Your Child" placeholder="Poppy" />
               <RHFTextField
                 name="appearance"
                 label="Describe the appearance of your child (tell us any unique features)"
+                placeholder="Big shiny chocolate eyes, chocolate hair soft curles, handsome"
+                max
               />
-              <RHFTextField name="personality" label="Personality (are they energetic, shy, etc)" />
+              <RHFTextField
+                name="personality"
+                label="Personality (are they energetic, shy, etc)"
+                placeholder="joyful, initiative, happy, playful"
+              />
               <RHFTextField
                 name="perspective"
                 label="Perspective (mommy and daddy or who is singing this song)"
+                placeholder="Mommy and Daddy"
               />
-              <RHFTextField name="singer" label="Male or Female Singer" />
+              {/* <RHFTextField name="singer" label="Male or Female Singer" /> */}
 
               <Stack
                 alignItems="center"

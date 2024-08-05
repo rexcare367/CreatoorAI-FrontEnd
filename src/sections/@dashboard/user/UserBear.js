@@ -1,11 +1,14 @@
 /* eslint-disable react/jsx-no-bind */
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
+import moment from 'moment';
 // @mui
 import { styled } from '@mui/material/styles';
 import {
   Card,
   Box,
+  Link,
   Paper,
   Step,
   Stepper,
@@ -14,6 +17,9 @@ import {
   stepConnectorClasses,
   Typography,
   Stack,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from '@mui/material';
 // utils
 import { bgGradient } from '../../../utils/cssStyles';
@@ -23,11 +29,12 @@ import Iconify from '../../../components/iconify';
 import Image from '../../../components/image';
 import axios from '../../../utils/axios';
 
+// sections
+import { Block } from '../../_examples/Block';
 // ----------------------------------------------------------------------
 
 export default function UserBearsPage() {
-  const [bearData, setBearData] = useState({ id: '', prompt: '' });
-  const [activeStep, setActiveStep] = useState(0);
+  const [bearData, setBearData] = useState([{ id: '', prompt: '' }]);
 
   const STEPS = [
     { value: 'in-production', label: 'In Production' },
@@ -41,8 +48,7 @@ export default function UserBearsPage() {
       .then((res) => {
         console.log('res :>> ', res.data);
         setBearData(res.data);
-        const index = STEPS.findIndex((step) => step.value === res.data.status);
-        setActiveStep(index);
+        // setActiveStep(index);
       })
       .catch((err) => err);
   };
@@ -182,52 +188,117 @@ export default function UserBearsPage() {
   return (
     <div>
       <Box gap={1} display="grid">
-        {/* {bears.map((bear, index) =>
-            bear.clips.map((clip, i) => <UserCard key={i} user={clip.clip_data} />)
-          )} */}
-        <Card
-          sx={{
-            mt: 3,
-            py: 4,
-            display: 'flex',
-            justifyContent: 'center',
-            flexDirection: 'row',
-            alignItems: 'flex-start',
-          }}
-        >
-          <Image
-            alt="grid"
-            src="/assets/images/home/bear.png"
-            sx={{ height: 240, borderRadius: 2 }}
-          />
-          <Stack sx={{ p: 2 }}>
-            <Typography variant="h6">BearId:</Typography>
-            <Typography sx={{ mb: 2 }}>{bearData.id}</Typography>
-            <Typography variant="h6">Prompt:</Typography>
-            <Typography sx={{ mb: 2 }}>{bearData?.prompt}</Typography>
-            <Typography variant="h6">Payment Status:</Typography>
-            <Typography sx={{ mb: 2 }}>
-              <Label variant="soft" color="success" sx={{ textTransform: 'capitalize' }}>
-                {bearData?.payment_status}
-              </Label>
-            </Typography>
-          </Stack>
-        </Card>
-        <Paper
-          sx={{
-            p: 3,
-            width: '100%',
-            boxShadow: (theme) => theme.customShadows.z8,
-          }}
-        >
-          <Stepper alternativeLabel activeStep={activeStep} connector={<ColorlibConnector />}>
-            {STEPS.map(({ label }) => (
-              <Step key={label}>
-                <StepLabel StepIconComponent={ColorlibStepIcon}>{label}</StepLabel>
-              </Step>
-            ))}
-          </Stepper>
-        </Paper>
+        <Block title="Check Delivery Status" sx={{ p: 2 }}>
+          {bearData &&
+            bearData.map((bear, index) => {
+              const prompt = bear.prompt.replace(/\n/g, '<br/>');
+              const activeStep = STEPS.findIndex((step) => step.value === bear.status);
+              return (
+                <Accordion key={bear.id} defaultExpanded={index === 0}>
+                  <AccordionSummary expandIcon={<Iconify icon="eva:arrow-ios-downward-fill" />}>
+                    <Stack
+                      sx={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        width: '100%',
+                        gap: 3,
+                      }}
+                    >
+                      <Typography variant="subtitle1">{bear.id}</Typography>
+                      <Typography variant="subtitle1">
+                        <Label variant="soft" color="warning" sx={{ textTransform: 'capitalize' }}>
+                          {moment(bear.createdAt).format('YYYY-MM-DD HH:mm')}
+                        </Label>
+                      </Typography>
+                      <Typography variant="subtitle1">
+                        <Label
+                          variant="soft"
+                          color={bear.payment_status === 'paid' ? 'success' : 'error'}
+                          sx={{ textTransform: 'capitalize' }}
+                        >
+                          {bear.payment_status}
+                        </Label>
+                      </Typography>
+                    </Stack>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <Card
+                      sx={{
+                        mt: 3,
+                        pt: 4,
+                        display: 'flex',
+                        justifyContent: 'center',
+                        flexDirection: 'column',
+                        alignItems: 'flex-start',
+                      }}
+                    >
+                      <Stack
+                        sx={{
+                          py: 2,
+                          px: 6,
+                          display: 'flex',
+                          justifyContent: 'center',
+                          flexDirection: 'row',
+                          alignItems: 'flex-start',
+                        }}
+                      >
+                        <Image
+                          alt="grid"
+                          src="/assets/images/home/bear.png"
+                          sx={{ height: 240, borderRadius: 2 }}
+                        />
+                        <Stack sx={{ px: 4 }}>
+                          <Typography variant="h6">BearId:</Typography>
+                          <Typography sx={{ mb: 1, ml: 2 }}>
+                            <Link
+                              to={`/dashboard/user/review?bearId=${bear.id}`}
+                              component={RouterLink}
+                            >
+                              {bear.id}
+                            </Link>
+                          </Typography>
+                          <Typography variant="h6">Prompt:</Typography>
+                          <Typography
+                            sx={{ mb: 1, ml: 2 }}
+                            dangerouslySetInnerHTML={{ __html: prompt }}
+                          />
+                          <Typography variant="h6">Payment Status:</Typography>
+                          <Typography sx={{ mb: 1, ml: 2 }}>
+                            <Label
+                              variant="soft"
+                              color="success"
+                              sx={{ textTransform: 'capitalize' }}
+                            >
+                              {bear?.payment_status}
+                            </Label>
+                          </Typography>
+                        </Stack>
+                      </Stack>
+                      <Paper
+                        sx={{
+                          p: 3,
+                          width: '100%',
+                          boxShadow: (theme) => theme.customShadows.z8,
+                        }}
+                      >
+                        <Stepper
+                          alternativeLabel
+                          activeStep={activeStep}
+                          connector={<ColorlibConnector />}
+                        >
+                          {STEPS.map(({ label }) => (
+                            <Step key={label}>
+                              <StepLabel StepIconComponent={ColorlibStepIcon}>{label}</StepLabel>
+                            </Step>
+                          ))}
+                        </Stepper>
+                      </Paper>
+                    </Card>
+                  </AccordionDetails>
+                </Accordion>
+              );
+            })}
+        </Block>
       </Box>
     </div>
   );

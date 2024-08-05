@@ -25,7 +25,7 @@ export function Block({ title, sx, children }) {
       <Box
         sx={{
           p: 5,
-          minHeight: 180,
+          minHeight: 120,
           ...sx,
         }}
       >
