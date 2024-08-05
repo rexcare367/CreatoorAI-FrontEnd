@@ -86,7 +86,7 @@ export default function PreList({ bearId }) {
   const [isLoadingCheckout, setIsLoadingCheckout] = useState(false);
   const [apiStatus, setApiStatus] = useState('idle');
   // const [hideAlert, setHideAlert] = useState(false);
-  const [bearData, setBearData] = useState({ status: 'on-hold' });
+  const [bearData, setBearData] = useState({});
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -96,9 +96,12 @@ export default function PreList({ bearId }) {
       .get(`bear/${bearId}`)
       .then((resp) => resp.data)
       .catch((err) => err);
-    const { finalClipIds, suggestionClipIds } = _bear;
+    const { finalClipIds, suggestionClipIds, status } = _bear;
     // console.log('data :>> ', _bear);
-    await setBearData(_bear);
+    setBearData((prevBear) => ({ ...prevBear, ..._bear }));
+    setValue('status', status);
+
+    // setUser(prevUser => ({ ...prevUser, auth: !prevUser.auth }));
     if (finalClipIds?.length > 0) await loadMusicClips(finalClipIds);
     else if (suggestionClipIds?.length > 0) await loadMusicClips(suggestionClipIds);
     else await loadMusicsWithTaskId(_bear);
@@ -164,7 +167,6 @@ export default function PreList({ bearId }) {
     () => ({
       status: bearData?.status || '',
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [bearData]
   );
 
