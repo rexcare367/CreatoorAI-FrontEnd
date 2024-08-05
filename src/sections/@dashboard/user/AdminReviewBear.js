@@ -86,7 +86,7 @@ export default function PreList({ bearId }) {
   const [isLoadingCheckout, setIsLoadingCheckout] = useState(false);
   const [apiStatus, setApiStatus] = useState('idle');
   // const [hideAlert, setHideAlert] = useState(false);
-  const [bearData, setBearData] = useState({ status: 'in-production' });
+  const [bearData, setBearData] = useState({ status: 'on-hold' });
 
   const { enqueueSnackbar } = useSnackbar();
 
