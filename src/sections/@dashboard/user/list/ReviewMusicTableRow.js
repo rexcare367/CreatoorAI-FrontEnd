@@ -35,7 +35,11 @@ export default function UserTableRow({ row, selected, onEditRow, onSelectRow, on
 
         <TableCell>
           <Stack direction="row" alignItems="center" spacing={2}>
-            <Avatar alt={created_at} src={image_url} />
+            <Avatar
+              alt={created_at}
+              src={image_url}
+              sx={{ borderRadius: 1, width: 100, height: 100 }}
+            />
 
             <Typography variant="subtitle2" noWrap>
               {title}

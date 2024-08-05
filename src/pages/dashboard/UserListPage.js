@@ -85,7 +85,7 @@ export default function UserListPage() {
   const loadBears = async () => {
     // await setIsLoading(true);
     await setIsLoading(true);
-    const filters = {};
+    const filters = { sortBy: 'createdAt' };
     // eslint-disable-next-line dot-notation
     if (filterStatus !== 'all') filters['payment_status'] = filterStatus;
     const result = await axios

@@ -91,6 +91,7 @@ export default function PreList({ bearId }) {
   const { enqueueSnackbar } = useSnackbar();
 
   const loadBear = async () => {
+    setApiStatus('loading');
     const _bear = await axios
       .get(`bear/${bearId}`)
       .then((resp) => resp.data)
@@ -98,8 +99,8 @@ export default function PreList({ bearId }) {
     const { finalClipIds, suggestionClipIds } = _bear;
     // console.log('data :>> ', _bear);
     await setBearData(_bear);
-    if (finalClipIds.length > 0) await loadMusicClips(finalClipIds);
-    else if (suggestionClipIds.length > 0) await loadMusicClips(suggestionClipIds);
+    if (finalClipIds?.length > 0) await loadMusicClips(finalClipIds);
+    else if (suggestionClipIds?.length > 0) await loadMusicClips(suggestionClipIds);
     else await loadMusicsWithTaskId(_bear);
   };
 
@@ -135,10 +136,7 @@ export default function PreList({ bearId }) {
       // eslint-disable-next-line no-await-in-loop
       const _newMusics = await axios
         .get(`music/${clipsIds[i]}`)
-        .then((resp) => {
-          setApiStatus('loading');
-          return resp.data;
-        })
+        .then((resp) => resp.data)
         .catch((err) => {
           setApiStatus('error');
           return err;
@@ -155,7 +153,7 @@ export default function PreList({ bearId }) {
   useEffect(() => {
     loadBear();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bearId]);
+  }, []);
 
   const FormSchema = Yup.object().shape({
     //
@@ -348,7 +346,7 @@ export default function PreList({ bearId }) {
             </Table>
           </Scrollbar>
         </TableContainer>
-        {bearData.suggestionClipIds.length < 2 && (
+        {bearData?.suggestionClipIds?.length < 2 && (
           <Stack spacing={3} alignItems="flex-end" sx={{ m: 3 }}>
             {isLoading && <LinearProgress color="primary" sx={{ mb: 2, width: 1 }} />}
             <LoadingButton
