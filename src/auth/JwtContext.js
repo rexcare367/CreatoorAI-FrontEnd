@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import { createContext, useEffect, useReducer, useCallback, useMemo } from 'react';
+import { redirect } from 'react-router-dom';
 // utils
 import axios from '../utils/axios';
 import localStorageAvailable from '../utils/localStorageAvailable';
@@ -127,6 +128,7 @@ export function AuthProvider({ children }) {
         user,
       },
     });
+    return user;
   }, []);
 
   // REGISTER

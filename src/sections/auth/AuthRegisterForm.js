@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 // form
 import { useForm } from 'react-hook-form';
@@ -6,6 +7,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 // @mui
 import { Stack, IconButton, InputAdornment, Alert } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
+// routes
+import { PATH_AUTH } from '../../routes/paths';
 // auth
 import { useAuthContext } from '../../auth/useAuthContext';
 // components
@@ -15,6 +18,7 @@ import FormProvider, { RHFTextField } from '../../components/hook-form';
 // ----------------------------------------------------------------------
 
 export default function AuthRegisterForm() {
+  const navigate = useNavigate();
   const { register } = useAuthContext();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -49,6 +53,7 @@ export default function AuthRegisterForm() {
     try {
       if (register) {
         await register(data.email, data.password, data.firstName, data.lastName);
+        navigate(PATH_AUTH.login);
       }
     } catch (error) {
       console.error(error);

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 // form
 import { useForm } from 'react-hook-form';
@@ -6,6 +7,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 // @mui
 import { Stack, Alert, IconButton, InputAdornment } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
+// routes
+import { PATH_DASHBOARD } from '../../routes/paths';
 // auth
 import { useAuthContext } from '../../auth/useAuthContext';
 // components
@@ -15,6 +18,7 @@ import FormProvider, { RHFTextField } from '../../components/hook-form';
 // ----------------------------------------------------------------------
 
 export default function AuthLoginForm() {
+  const navigate = useNavigate();
   const { login } = useAuthContext();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -43,7 +47,9 @@ export default function AuthLoginForm() {
 
   const onSubmit = async (data) => {
     try {
-      await login(data.email, data.password);
+      const user = await login(data.email, data.password);
+      console.log('user :>> ', user);
+      if (user?.role === 'admin') navigate(PATH_DASHBOARD.admin.list);
     } catch (error) {
       console.error(error);
       reset();

@@ -74,8 +74,6 @@ export default function Router() {
         </AuthGuard>
       ),
       children: [
-        { element: <Navigate to="/dashboard/user/new" replace />, index: true },
-        // { path: 'app', element: <GeneralAppPage /> },
         {
           path: 'user',
           children: [
